@@ -25,6 +25,11 @@ void loop()
 {
   if (enviar)
     enviarMensaje();
+  if (WiFi.status() != WL_CONNECTED)
+    {
+      Serial.println("Error: Conexión WiFi perdida.");
+      WiFiStart();
+    }
 }
 void WiFiStart() // Inicializa la conexion
 {
@@ -71,6 +76,7 @@ void enviarMensaje()
   {
     parms[0] = "id_mensaje="+id_mensaje;
     response = Api("mv",parms,1);  // llamada que devuelve la cadena "null" hasta que el mensaje haya sido leido
+    //chequear aqui si lo que ha respondido es un error de conexion (si pasa mucho tiempo sin actividad, el router te desconecta)
     Serial.println(response);
     delay(100);
   }
@@ -104,8 +110,7 @@ void IRAM_ATTR pushISR() // ISR push
 }
 String Api(char metodo[], String parametros[],int numparam) //Hace una llamada al metodo del Api indicado con los parametros que van en el array Los parametros van en formato 'paramname=paramvalue'
 {
-  
-   int f, responsecode;
+  int f, responsecode;
   String postData, url, payload;
   DeserializationError error;   // por si esta mal formada la respuesta
   postData = parametros[0];
@@ -117,20 +122,14 @@ String Api(char metodo[], String parametros[],int numparam) //Hace una llamada a
         postData += parametros[f];
       }
   }
-  //borrame = postData;
   url = _URL;
   url += metodo; // con esto queda formada la url del API con su metodo al final
-  
   Serial.print("Comunicando con: ");
-  
   Serial.println(url);
-  
   Serial.println(postData);
-  
-  delay(10000);
+  //delay(10000);
   apicall.begin(url);    // iniciamos la llamada al api
   // Especificamos el header content-type
-  
   apicall.addHeader("Content-Type", "application/x-www-form-urlencoded");
   responsecode = apicall.POST(postData);  
   if(responsecode != 200)
