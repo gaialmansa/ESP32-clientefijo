@@ -14,9 +14,7 @@ void setup()
   pinMode(LED_ROJO, OUTPUT);  // pines de salida
   pinMode(LED_VERDE,OUTPUT);
   pinMode(BOTON, INPUT_PULLUP); // pin de entrada
-  //attachInterrupt(BOTON, pushISR, FALLING);    // pulsador
   digitalWrite(LED_VERDE,HIGH);     // de entrada ponemos el verde
-  //enviarMensaje();
   Serial.println("Activando interrupcion. Esperando pulsacion.");
   attachInterrupt(BOTON, pushISR, FALLING);    // pulsador
 }
@@ -28,7 +26,10 @@ void loop()
   if (WiFi.status() != WL_CONNECTED)
     {
       Serial.println("Error: Conexión WiFi perdida.");
+      WiFi.disconnect();
+      //WiFi.reconnect();
       WiFiStart();
+
     }
 }
 void WiFiStart() // Inicializa la conexion
