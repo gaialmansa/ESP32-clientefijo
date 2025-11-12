@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <HTTPClient.h>
-#include <ArduinoJson.h>
+//#include <ArduinoJson.h>
 
 #include <local.h>
 
